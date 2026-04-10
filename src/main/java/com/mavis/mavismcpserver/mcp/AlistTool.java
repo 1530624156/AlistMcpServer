@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Configuration
@@ -60,6 +62,30 @@ public class AlistTool {
             }
             String alistFileList = AlistUtils.getAlistFileList(alistConfig, path);
             return alistFileList;
+        }
+
+        @Tool(name = "Alist文件信息", description = "用于获取Alist文件信息")
+        public String alistFileInfo(@ToolParam(description = "Alist的文件目录") String filePath) {
+            AlistConfig alistConfig = getAlistConfig();
+            if (alistConfig == null) {
+                return "【MCP】:请先初始化Alist配置";
+            }
+            String alistFileInfo = AlistUtils.getAlistFileInfo(alistConfig, filePath, alistConfig.getAlistPassword());
+            return alistFileInfo;
+        }
+
+        @Tool(name = "Alist所有文件信息", description = "递归获取Alist所有文件信息")
+        public String alistAllFileInfo(@ToolParam(description = "Alist的目录") String path) {
+            AlistConfig alistConfig = getAlistConfig();
+            if (alistConfig == null) {
+                return "【MCP】:请先初始化Alist配置";
+            }
+            List<HashMap<String, String>> alistAllFilesInfo = AlistUtils.getAlistAllFilesInfo(alistConfig, path, alistConfig.getAlistPassword());
+            if (CollectionUtils.isEmpty(alistAllFilesInfo)) {
+                return "【MCP】:没有找到文件";
+            }
+            return alistAllFilesInfo.toString();
+
         }
 
 

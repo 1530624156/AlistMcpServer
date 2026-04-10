@@ -18,6 +18,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@TableName("t_alist_config")
 public class TAlistConfig {
 
     private String url;
