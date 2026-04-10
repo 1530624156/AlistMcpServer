@@ -421,6 +421,8 @@
                 const data = await response.json();
                 if (data.initialized) {
                     showMessage('Alist 已配置，如需重新配置请填写新信息后提交', 'info');
+                } else if (data.message) {
+                    showMessage(data.message, 'error');
                 }
             } catch (error) {
                 // Silently ignore status check errors

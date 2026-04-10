@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,7 +70,25 @@ public class AlistController {
     @GetMapping("/status")
     public Mono<Map<String, Object>> alistStatus() {
         Map<String, Object> result = new HashMap<>();
-        boolean initialized = !CollectionUtils.isEmpty(tAlistConfigService.list());
+        List<TAlistConfig> configs = tAlistConfigService.list();
+        boolean initialized = !CollectionUtils.isEmpty(configs);
+
+        if (initialized) {
+            TAlistConfig savedConfig = configs.get(0);
+            AlistConfig alistConfig = new AlistConfig(savedConfig.getUrl(), savedConfig.getUsername(), savedConfig.getPassword());
+            String token;
+            try {
+                token = AlistUtils.getToken(alistConfig);
+            } catch (Exception e) {
+                token = null;
+            }
+            if (StringUtils.isBlank(token)) {
+                result.put("initialized", false);
+                result.put("message", "Alist配置信息错误，请重新初始化");
+                return Mono.just(result);
+            }
+        }
+
         result.put("initialized", initialized);
         return Mono.just(result);
     }
